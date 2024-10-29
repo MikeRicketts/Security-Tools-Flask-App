@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome to the Dashboard</h2>
+    <p>Welcome, {{ current_user.username }}!</p>
+
+    {% if role == 'Admin' %}
+        <h4>Admin Actions</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>
+                            {% if user.role != 'Admin' %}
+                                <form method="POST" action="{{ url_for('promote', user_id=user.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-primary">Promote to Admin</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <div class="mt-4">
+        <h4>Networking Tools</h4>
+        <button class="btn btn-primary mb-3" disabled>Run Port Scan</button>
+        <button class="btn btn-secondary mb-3" disabled>Run Packet Sniffer</button>
+
+        <!-- Placeholder for tool results -->
+        <div>
+            <h5>Scan Results</h5>
+            <p>Results from port scanning and packet sniffing will be displayed here.</p>
+        </div>
+    </div>
+{% endblock %}
