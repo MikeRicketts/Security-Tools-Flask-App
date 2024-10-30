@@ -36,13 +36,51 @@
 
     <div class="mt-4">
         <h4>Networking Tools</h4>
-        <button class="btn btn-primary mb-3" disabled>Run Port Scan</button>
-        <button class="btn btn-secondary mb-3" disabled>Run Packet Sniffer</button>
+        <form action="{{ url_for('sniff_packets') }}" method="post">
+            <button type="submit" class="btn btn-secondary mb-3">Run Packet Sniffer</button>
+        </form>
+        <form action="{{ url_for('scan_ports') }}" method="post">
+            <div class="form-group">
+                <label for="host">Host:</label>
+                <input type="text" id="host" name="host" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="start_port">Start Port:</label>
+                <input type="number" id="start_port" name="start_port" class="form-control" min="1" max="65535" required>
+            </div>
+            <div class="form-group">
+                <label for="end_port">End Port:</label>
+                <input type="number" id="end_port" name="end_port" class="form-control" min="1" max="65535" required>
+            </div>
+            <button type="submit" class="btn btn-primary mb-3">Run Port Scanner</button>
+        </form>
 
-        <!-- Placeholder for tool results -->
-        <div>
+        <div id="scan-results">
             <h5>Scan Results</h5>
-            <p>Results from port scanning and packet sniffing will be displayed here.</p>
+            <ul>
+                {% for result in scan_results %}
+                    <li>{{ result.timestamp }} - {{ result.target_ip }}: {{ result.open_ports }}</li>
+                {% endfor %}
+            </ul>
         </div>
+
+        <!-- Button to toggle scan results visibility -->
+        <button onclick="toggleScanResults()" class="btn btn-warning">Hide/Show Scan Results</button>
+
+        <!-- Button to remove scan results -->
+        <form action="{{ url_for('remove_scan_results') }}" method="post">
+            <button type="submit" class="btn btn-danger">Remove Scan Results</button>
+        </form>
     </div>
+
+    <script>
+    function toggleScanResults() {
+        var scanResults = document.getElementById('scan-results');
+        if (scanResults.style.display === 'none') {
+            scanResults.style.display = 'block';
+        } else {
+            scanResults.style.display = 'none';
+        }
+    }
+    </script>
 {% endblock %}
