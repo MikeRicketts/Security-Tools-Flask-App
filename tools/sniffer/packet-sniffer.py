@@ -1,51 +1,51 @@
+import json
 from scapy.all import *
 from scapy.layers.inet import IP, TCP, UDP
+from scapy.sendrecv import AsyncSniffer
 import threading
 import time
+from collections import deque
 
 class PacketSniffer:
     def __init__(self, interface=None, store=False, filter_str=""):
-        """
-        Initializes the PacketSniffer.
-
-        :param interface: Network interface to sniff on. If None, scapy selects the default.
-        :param store: Whether to store packets in scapy's memory. False to minimize memory usage.
-        :param filter_str: BPF filter string to filter packets (e.g., 'tcp', 'udp port 53').
-        """
         self.interface = interface
         self.store = store
         self.filter_str = filter_str
-        self.packets = []
-        self.sniffing = False
-        self.thread = None
+        self.packets = deque(maxlen=1000)  # Limit to 1000 packets
+        self.sniffing = threading.Event()
+        self.sniffer = None
         self.lock = threading.Lock()
 
     def start_sniffing(self):
         """Starts the packet sniffing in a separate thread."""
-        if not self.sniffing:
-            self.sniffing = True
+        if not self.sniffing.is_set():
+            self.sniffing.set()
             self.thread = threading.Thread(target=self.sniff_packets, daemon=True)
             self.thread.start()
             print("[*] Packet sniffing started.")
 
     def stop_sniffing(self):
         """Stops the packet sniffing."""
-        if self.sniffing:
-            self.sniffing = False
+        if self.sniffing.is_set():
+            self.sniffing.clear()
             print("[*] Stopping packet sniffing...")
+            if self.sniffer:
+                self.sniffer.stop()
             if self.thread is not None:
                 self.thread.join()
             print("[*] Packet sniffing stopped.")
 
     def sniff_packets(self):
         """Sniffs packets and processes them."""
-        sniff(
+        self.sniffer = AsyncSniffer(
             iface=self.interface,
             filter=self.filter_str,
             prn=self.process_packet,
-            store=self.store,
-            stop_filter=lambda pkt: not self.sniffing
+            store=self.store
         )
+        self.sniffer.start()
+        while self.sniffing.is_set():
+            time.sleep(0.1)
 
     def process_packet(self, packet):
         """Processes each captured packet and stores relevant information."""
@@ -68,14 +68,11 @@ class PacketSniffer:
                 "source_ip": ip_layer.src,
                 "destination_ip": ip_layer.dst,
                 "protocol": protocol,
-                "payload": payload.decode(errors='ignore')[:100]  # Limit payload size for readability
+                "payload": payload.hex() if payload else None  # Convert to hex for safer serialization
             }
 
             with self.lock:
                 self.packets.append(packet_info)
-                # Optional: Limit stored packets to prevent memory issues
-                if len(self.packets) > 1000:
-                    self.packets.pop(0)
 
     def get_captured_packets(self):
         """Returns a copy of the captured packets."""
@@ -87,27 +84,40 @@ class PacketSniffer:
         with self.lock:
             self.packets.clear()
 
+    def save_packets_to_json(self, filename):
+        """Saves the captured packets to a JSON file."""
+        with self.lock:
+            with open(filename, 'w') as f:
+                json.dump(list(self.packets), f, indent=4)
+
+    def load_packets_from_json(self, filename):
+        """Loads packets from a JSON file."""
+        with open(filename, 'r') as f:
+            packets = json.load(f)
+        with self.lock:
+            self.packets = deque(packets, maxlen=1000)
+
 
 if __name__ == "__main__":
-    # Initialize the packet sniffer with default interface
     sniffer = PacketSniffer(interface=None, store=True, filter_str="tcp")
-
-    # Start sniffing
     sniffer.start_sniffing()
 
-    # Keep the main thread alive for 10 seconds
     try:
         for _ in range(10):
             time.sleep(1)
     except KeyboardInterrupt:
         pass
 
-    # Stop sniffing
     sniffer.stop_sniffing()
 
-    # Retrieve captured packets
     packets = sniffer.get_captured_packets()
-
-    # Print captured packets
     for packet in packets:
+        print(packet)
+
+    # Save packets to a JSON file
+    sniffer.save_packets_to_json("captured_packets.json")
+
+    # Load packets from a JSON file (for testing)
+    sniffer.load_packets_from_json("captured_packets.json")
+    for packet in sniffer.get_captured_packets():
         print(packet)
