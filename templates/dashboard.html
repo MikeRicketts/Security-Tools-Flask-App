@@ -23,7 +23,7 @@
                         <td>{{ user.role }}</td>
                         <td>
                             {% if user.role != 'Admin' %}
-                                <form method="POST" action="{{ url_for('promote', user_id=user.id) }}">
+                                <form method="POST" action="{{ url_for('dashboard.promote', user_id=user.id) }}">
                                     <button type="submit" class="btn btn-sm btn-primary">Promote to Admin</button>
                                 </form>
                             {% endif %}
@@ -36,14 +36,14 @@
 
     <div class="mt-4">
         <h4>Networking Tools</h4>
-        <form action="{{ url_for('sniff_packets') }}" method="post">
+        <form action="{{ url_for('dashboard.sniff_packets') }}" method="post">
             <div class="form-group">
                 <label for="interface">Interface:</label>
                 <input type="text" id="interface" name="interface" class="form-control" required>
             </div>
             <button type="submit" class="btn btn-secondary mb-3">Run Packet Sniffer</button>
         </form>
-        <form action="{{ url_for('scan_ports') }}" method="post">
+        <form action="{{ url_for('dashboard.scan_ports') }}" method="post">
             <div class="form-group">
                 <label for="host">Host:</label>
                 <input type="text" id="host" name="host" class="form-control" required>
@@ -57,25 +57,6 @@
                 <input type="number" id="end_port" name="end_port" class="form-control" min="1" max="65535" required>
             </div>
             <button type="submit" class="btn btn-primary mb-3">Run Port Scanner</button>
-        </form>
-        <form action="{{ url_for('discover_devices') }}" method="post">
-            <div class="form-group">
-                <label for="start_ip">Start IP:</label>
-                <input type="text" id="start_ip" name="start_ip" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="end_ip">End IP:</label>
-                <input type="text" id="end_ip" name="end_ip" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="ports">Ports (comma-separated):</label>
-                <input type="text" id="ports" name="ports" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="timeout">Timeout (milliseconds):</label>
-                <input type="number" id="timeout" name="timeout" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-secondary mb-3">Discover Devices</button>
         </form>
     </div>
 
@@ -95,58 +76,40 @@
             <p>No scan results available.</p>
         {% endif %}
         <button onclick="toggleScanResults()" class="btn btn-warning">Hide/Show Scan Results</button>
-        <form action="{{ url_for('remove_scan_results') }}" method="post">
+        <form action="{{ url_for('dashboard.remove_scan_results') }}" method="post">
             <button type="submit" class="btn btn-danger">Remove Scan Results</button>
         </form>
     </div>
 
-<div class="mt-4">
-    <h4>Packet Sniffing Results</h4>
-    {% if packet_sniffer_results %}
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Timestamp</th>
-                    <th>Source IP</th>
-                    <th>Destination IP</th>
-                    <th>Protocol</th>
-                    <th>Payload</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for packet in packet_sniffer_results %}
+    <div class="mt-4">
+        <h4>Packet Sniffing Results</h4>
+        {% if packet_sniffer_results %}
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ packet.timestamp }}</td>
-                        <td>{{ packet.source_ip }}</td>
-                        <td>{{ packet.destination_ip }}</td>
-                        <td>{{ packet.protocol }}</td>
-                        <td>{{ packet.payload }}</td>
+                        <th>Timestamp</th>
+                        <th>Source IP</th>
+                        <th>Destination IP</th>
+                        <th>Protocol</th>
+                        <th>Payload</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No packet sniffing results available.</p>
-    {% endif %}
-</div>
-
-<div class="mt-4">
-    <h4>Device Discovery Results</h4>
-    {% if device_discovery_results %}
-        <ul>
-            {% for device in device_discovery_results %}
-                <li>
-                    <strong>IP:</strong> {{ device.ip }}<br>
-                    <strong>Open Ports:</strong> {{ device.open_ports }}<br>
-                    <strong>Details:</strong> {{ device.devices }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No device discovery results available.</p>
-    {% endif %}
-</div>
-
+                </thead>
+                <tbody>
+                    {% for packet in packet_sniffer_results %}
+                        <tr>
+                            <td>{{ packet.timestamp }}</td>
+                            <td>{{ packet.source_ip }}</td>
+                            <td>{{ packet.destination_ip }}</td>
+                            <td>{{ packet.protocol }}</td>
+                            <td>{{ packet.payload }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No packet sniffing results available.</p>
+        {% endif %}
+    </div>
 
     <script>
     function toggleScanResults() {
