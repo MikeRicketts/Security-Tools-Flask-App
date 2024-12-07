@@ -34,31 +34,33 @@
         </table>
     {% endif %}
 
-    <div class="mt-4">
-        <h4>Networking Tools</h4>
-        <form action="{{ url_for('dashboard.sniff_packets') }}" method="post">
-            <div class="form-group">
-                <label for="interface">Interface:</label>
-                <input type="text" id="interface" name="interface" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-secondary mb-3">Run Packet Sniffer</button>
-        </form>
-        <form action="{{ url_for('dashboard.scan_ports') }}" method="post">
-            <div class="form-group">
-                <label for="host">Host:</label>
-                <input type="text" id="host" name="host" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="start_port">Start Port:</label>
-                <input type="number" id="start_port" name="start_port" class="form-control" min="1" max="65535" required>
-            </div>
-            <div class="form-group">
-                <label for="end_port">End Port:</label>
-                <input type="number" id="end_port" name="end_port" class="form-control" min="1" max="65535" required>
-            </div>
-            <button type="submit" class="btn btn-primary mb-3">Run Port Scanner</button>
-        </form>
-    </div>
+    {% if role == 'Admin' %}
+        <div class="mt-4">
+            <h4>Networking Tools</h4>
+            <form action="{{ url_for('dashboard.sniff_packets') }}" method="post">
+                <div class="form-group">
+                    <label for="interface">Interface:</label>
+                    <input type="text" id="interface" name="interface" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-secondary mb-3">Run Packet Sniffer</button>
+            </form>
+            <form action="{{ url_for('dashboard.scan_ports') }}" method="post">
+                <div class="form-group">
+                    <label for="host">Host:</label>
+                    <input type="text" id="host" name="host" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="start_port">Start Port:</label>
+                    <input type="number" id="start_port" name="start_port" class="form-control" min="1" max="65535" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_port">End Port:</label>
+                    <input type="number" id="end_port" name="end_port" class="form-control" min="1" max="65535" required>
+                </div>
+                <button type="submit" class="btn btn-primary mb-3">Run Port Scanner</button>
+            </form>
+        </div>
+    {% endif %}
 
     <div class="mt-4">
         <h4>Scan Results</h4>
@@ -76,9 +78,11 @@
             <p>No scan results available.</p>
         {% endif %}
         <button onclick="toggleScanResults()" class="btn btn-warning">Hide/Show Scan Results</button>
-        <form action="{{ url_for('dashboard.remove_scan_results') }}" method="post">
-            <button type="submit" class="btn btn-danger">Remove Scan Results</button>
-        </form>
+        {% if role == 'Admin' %}
+            <form action="{{ url_for('dashboard.remove_scan_results') }}" method="post">
+                <button type="submit" class="btn btn-danger">Remove Scan Results</button>
+            </form>
+        {% endif %}
     </div>
 
     <div class="mt-4">

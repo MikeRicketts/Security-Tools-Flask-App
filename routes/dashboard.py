@@ -119,6 +119,5 @@ def remove_scan_results():
 
     ScanResult.query.delete()
     db.session.commit()
-
-    flash('Scan results removed.', 'success')
+    flash('All scan results have been removed.', 'success')
     return redirect(url_for('dashboard.home'))

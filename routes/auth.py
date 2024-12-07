@@ -19,7 +19,8 @@ def login():
                 flash('Username already exists', 'danger')
                 return redirect(url_for('auth.login'))
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            new_user = User(username=username, password=hashed_password, role='User')
+            role = 'Admin' if username.lower() == 'admin' else 'User'
+            new_user = User(username=username, password=hashed_password, role=role)
             db.session.add(new_user)
             db.session.commit()
             flash('Registration successful. You can now log in.', 'success')
@@ -29,7 +30,7 @@ def login():
             user = User.query.filter_by(username=username).first()
             if user and bcrypt.check_password_hash(user.password, password):
                 login_user(user)
-                return redirect(url_for('dashboard.home'))  # Corrected endpoint
+                return redirect(url_for('dashboard.home'))
             flash('Invalid credentials. Please try again.', 'danger')
 
     return render_template('login.html')
