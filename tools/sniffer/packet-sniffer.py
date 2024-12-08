@@ -56,11 +56,11 @@ class PacketSniffer:
         if IP in packet_proc:
             ip_layer = packet_proc[IP]
             protocol = "TCP" if TCP in packet_proc else "UDP" if UDP in packet_proc else None
-            payload_data = bytes(packet_proc[TCP].payload) if TCP in packet_proc else bytes(
+            pl_data = bytes(packet_proc[TCP].payload) if TCP in packet_proc else bytes(
                 packet_proc[UDP].payload) if UDP in packet_proc else None
 
-            if payload_data:
-                readable_payload = payload_data.hex()
+            if pl_data:
+                readable_payload = pl_data.hex()
             else:
                 readable_payload = None
 
@@ -70,7 +70,7 @@ class PacketSniffer:
                 "destination_ip": ip_layer.dst,
                 "protocol": protocol,
                 "payload": readable_payload,
-                "application_protocol": detect_application_protocol(packet_proc, payload_data)
+                "application_protocol": detect_application_protocol(packet_proc, pl_data)
             }
 
             with self.lock:

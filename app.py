@@ -3,7 +3,7 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from models import db, User
 from routes.auth import auth_bp
-from routes.dashboard import dashboard_bp
+from routes.dashboard import dash_bp
 import os
 
 # Initialize Flask app
@@ -28,8 +28,8 @@ with app.app_context():
     db.create_all()
     # Create an admin user if it doesn't exist. Hard coded for testing. Not ideal.
     if not User.query.filter_by(username='admin').first():
-        hashed_password = bcrypt.generate_password_hash('admin').decode('utf-8')
-        admin = User(username='admin', password=hashed_password, role='Admin')
+        hash_pw = bcrypt.generate_password_hash('admin').decode('utf-8')
+        admin = User(username='admin', password=hash_pw, role='Admin')
         db.session.add(admin)
         db.session.commit()
     users = User.query.all()
@@ -39,9 +39,8 @@ with app.app_context():
             user.password = bcrypt.generate_password_hash(user.password).decode('utf-8')
             db.session.commit()
 
-# Register Blueprints for authentication and dashboard routes
 app.register_blueprint(auth_bp, url_prefix='/auth')
-app.register_blueprint(dashboard_bp, url_prefix='/')
+app.register_blueprint(dash_bp, url_prefix='/')
 
 if __name__ == '__main__':
     app.run(debug=True)

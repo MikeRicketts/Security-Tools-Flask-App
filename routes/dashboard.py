@@ -6,8 +6,8 @@ import json
 from datetime import datetime
 from functools import wraps
 
-# Create Blueprint for dashboard routes
-dashboard_bp = Blueprint('dashboard', __name__)
+
+dash_bp = Blueprint('dashboard', __name__)
 
 def admin_required(f):
     """Decorator to require Admin role to access a route."""
@@ -19,14 +19,14 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorator
 
-@dashboard_bp.route('/')
+@dash_bp.route('/')
 @login_required
 def home():
     """Home page route."""
     scan_results = ScanResult.query.order_by(ScanResult.timestamp.desc()).all()
     return render_template('home.html', role=current_user.role, scan_results=scan_results)
 
-@dashboard_bp.route('/packet_sniffer', methods=['GET', 'POST'])
+@dash_bp.route('/packet_sniffer', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def packet_sniffer():
@@ -71,7 +71,7 @@ def packet_sniffer():
 
     return render_template('sniffer.html', current_packet_result=current_packet_result)
 
-@dashboard_bp.route('/port_scanner', methods=['GET', 'POST'])
+@dash_bp.route('/port_scanner', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def port_scanner():
@@ -125,7 +125,7 @@ def port_scanner():
 
     return render_template('scanner.html', current_scan_result=current_scan_result)
 
-@dashboard_bp.route('/results')
+@dash_bp.route('/results')
 @login_required
 def results():
     """Results page route."""
@@ -134,7 +134,7 @@ def results():
     packet_sniffer_results = PacketSnifferResult.query.order_by(PacketSnifferResult.timestamp.desc()).all()
     return render_template('results.html', scan_results=scan_results, packet_sniffer_results=packet_sniffer_results)
 
-@dashboard_bp.route('/promote/<int:user_id>', methods=['POST'])
+@dash_bp.route('/promote/<int:user_id>', methods=['POST'])
 @login_required
 @admin_required
 def promote(user_id):
@@ -148,7 +148,7 @@ def promote(user_id):
         flash('Invalid user or user is already an Admin.', 'danger')
     return redirect(url_for('dashboard.home'))
 
-@dashboard_bp.route('/remove_scan_result/<int:result_id>', methods=['POST'])
+@dash_bp.route('/remove_scan_result/<int:result_id>', methods=['POST'])
 @login_required
 @admin_required
 def remove_scan_result(result_id):
@@ -162,7 +162,7 @@ def remove_scan_result(result_id):
         flash('Scan result not found.', 'danger')
     return redirect(url_for('dashboard.results'))
 
-@dashboard_bp.route('/remove_packet_result/<int:result_id>', methods=['POST'])
+@dash_bp.route('/remove_packet_result/<int:result_id>', methods=['POST'])
 @login_required
 @admin_required
 def remove_packet_result(result_id):
@@ -176,7 +176,7 @@ def remove_packet_result(result_id):
         flash('Packet sniffer result not found.', 'danger')
     return redirect(url_for('dashboard.results'))
 
-@dashboard_bp.route('/clear_scan_results', methods=['POST'])
+@dash_bp.route('/clear_scan_results', methods=['POST'])
 @login_required
 @admin_required
 def clear_scan_results():
@@ -186,7 +186,7 @@ def clear_scan_results():
     flash('All scan results have been cleared.', 'success')
     return redirect(url_for('dashboard.results'))
 
-@dashboard_bp.route('/clear_packet_results', methods=['POST'])
+@dash_bp.route('/clear_packet_results', methods=['POST'])
 @login_required
 @admin_required
 def clear_packet_results():
@@ -196,7 +196,7 @@ def clear_packet_results():
     flash('All packet sniffer results have been cleared.', 'success')
     return redirect(url_for('dashboard.results'))
 
-@dashboard_bp.route('/remove_user/<int:user_id>', methods=['POST'])
+@dash_bp.route('/remove_user/<int:user_id>', methods=['POST'])
 @login_required
 @admin_required
 def remove_user(user_id):
@@ -210,7 +210,7 @@ def remove_user(user_id):
         flash('Invalid user or the user is an Admin.', 'danger')
     return redirect(url_for('dashboard.home'))
 
-@dashboard_bp.route('/admin')
+@dash_bp.route('/admin')
 @login_required
 @admin_required
 def admin():

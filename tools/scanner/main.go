@@ -125,7 +125,7 @@ func main() {
         openPorts = append(openPorts, port)
     }
 
-    // Generates the response in JSON
+    // Generates response in JSON
     closedPorts := totalPorts - len(openPorts)
     response := ScanResponse{
         Target:          req.Host,

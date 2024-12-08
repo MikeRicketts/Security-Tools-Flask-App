@@ -20,9 +20,9 @@ def login():
                 flash('Username already exists', 'danger')
                 return redirect(url_for('auth.login'))
 
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            hash_pw = bcrypt.generate_password_hash(password).decode('utf-8')
             role = 'Admin' if username.lower() == 'admin' else 'User'
-            new_user = User(username=username, password=hashed_password, role=role)
+            new_user = User(username=username, password=hash_pw, role=role)
             db.session.add(new_user)
             db.session.commit()
             flash('Registration was successful. You can now log in.', 'success')
