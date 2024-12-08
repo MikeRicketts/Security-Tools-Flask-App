@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Packet Sniffer{% endblock %}
+
+{% block content %}
+    <h2>Packet Sniffer</h2>
+    <div x-data="{ messages: {{ get_flashed_messages(with_categories=true) | tojson }} }">
+        <template x-for="[category, message] in messages">
+            <div :class="'alert alert-' + category" role="alert" x-text="message"></div>
+        </template>
+    </div>
+    <form action="{{ url_for('dashboard.packet_sniffer') }}" method="post" class="mt-3" x-data="{ sniffing: false }" @submit="sniffing = true">
+        <div class="form-group">
+            <label for="interface">Interface:</label>
+            <input type="text" id="interface" name="interface" class="form-control" placeholder="e.g. eth0 / lo OR local IP Address" required>
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Run Packet Sniffer</button>
+        <div x-show="sniffing" class="mt-3">
+            <p>Packet sniffing in progress...</p>
+        </div>
+    </form>
+
+    {% if current_packet_result %}
+        <h3>Current Result</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Source IP</th>
+                    <th>Destination IP</th>
+                    <th>Protocol</th>
+                    <th>Payload</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ current_packet_result.timestamp }}</td>
+                    <td>{{ current_packet_result.source_ip }}</td>
+                    <td>{{ current_packet_result.destination_ip }}</td>
+                    <td>{{ current_packet_result.protocol }}</td>
+                    <td class="wrap">{{ current_packet_result.payload }}</td>
+                </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p>No result available.</p>
+    {% endif %}
+{% endblock %}

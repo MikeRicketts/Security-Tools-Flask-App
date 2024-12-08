@@ -12,14 +12,14 @@ import (
     "time"
 )
 
-// ScanRequest represents the expected JSON payload for scanning
+// JSON request for scanning
 type ScanRequest struct {
     Host      string `json:"host"`
     StartPort int    `json:"start_port"`
     EndPort   int    `json:"end_port"`
 }
 
-// ScanResponse represents the JSON response after scanning
+// JSON response after scanning
 type ScanResponse struct {
     Target          string    `json:"target"`
     StartPort       int       `json:"start_port"`
@@ -32,42 +32,40 @@ type ScanResponse struct {
     Error           string    `json:"error,omitempty"`
 }
 
-// ValidateScanRequest validates the ScanRequest fields
+// Validates the ScanRequest payload
 func ValidateScanRequest(req ScanRequest) error {
-    // Validate Host
     if req.Host == "" {
-        return errors.New("host is required")
+        return errors.New("host required")
     }
-    // Check if it's a valid IP address
     if net.ParseIP(req.Host) == nil {
-        // Validate hostname using regex
+        // Checks if valid hostname with regex
         hostnameRegex := `^([a-zA-Z0-9]+(-[a-zA-Z0-9]+)*\.)+[a-zA-Z]{2,}$`
         matched, err := regexp.MatchString(hostnameRegex, req.Host)
         if err != nil || !matched {
             return errors.New("invalid hostname or IP address")
         }
-        // Attempt to resolve the hostname
+        // Resolves hostname to IP address
         _, err = net.LookupHost(req.Host)
         if err != nil {
-            return fmt.Errorf("unable to resolve host: %v", err)
+            return fmt.Errorf("failed to resolve hostname: %v", err)
         }
     }
 
-    // Validate StartPort and EndPort
+    // Validates StartPort and EndPort
     if req.StartPort < 1 || req.StartPort > 65535 {
-        return errors.New("start_port must be between 1 and 65535")
+        return errors.New("start port must be between 1 and 65535")
     }
     if req.EndPort < 1 || req.EndPort > 65535 {
-        return errors.New("end_port must be between 1 and 65535")
+        return errors.New("end port must be between 1 and 65535")
     }
     if req.StartPort > req.EndPort {
-        return errors.New("start_port cannot be greater than end_port")
+        return errors.New("start port cannot be greater than end port")
     }
 
     return nil
 }
 
-// ScanPort scans a specific TCP port on a given hostname
+// Scans a single port on a host
 func ScanPort(hostname string, port int, wg *sync.WaitGroup, results chan<- int, timeout time.Duration) {
     defer wg.Done()
 
@@ -84,7 +82,6 @@ func main() {
         fmt.Println("Usage: go run main.go <host> <start_port> <end_port>")
         os.Exit(1)
     }
-
     host := os.Args[1]
     startPort, err := strconv.Atoi(os.Args[2])
     if err != nil {
@@ -108,6 +105,7 @@ func main() {
         os.Exit(1)
     }
 
+    // Scans ports concurrently and collects open ports
     totalPorts := req.EndPort - req.StartPort + 1
     openPorts := make([]int, 0)
     results := make(chan int, totalPorts)
@@ -127,6 +125,7 @@ func main() {
         openPorts = append(openPorts, port)
     }
 
+    // Generates the response in JSON
     closedPorts := totalPorts - len(openPorts)
     response := ScanResponse{
         Target:          req.Host,
@@ -135,7 +134,7 @@ func main() {
         OpenPorts:       openPorts,
         ClosedPorts:     closedPorts,
         TotalPorts:      totalPorts,
-        DurationSeconds: 0, // Placeholder for scan duration if needed
+        DurationSeconds: 0, // Placeholder for scan duration
         Timestamp:       time.Now(),
     }
 

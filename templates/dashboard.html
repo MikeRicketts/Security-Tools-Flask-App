@@ -3,126 +3,13 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <h2>Welcome to the Dashboard</h2>
-    <p>Welcome, {{ current_user.username }}!</p>
 
-    {% if role == 'Admin' %}
-        <h4>Admin Actions</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Role</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.role }}</td>
-                        <td>
-                            {% if user.role != 'Admin' %}
-                                <form method="POST" action="{{ url_for('dashboard.promote', user_id=user.id) }}">
-                                    <button type="submit" class="btn btn-sm btn-primary">Promote to Admin</button>
-                                </form>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+    <!-- Navigation buttons for different tools -->
+    <a href="{{ url_for('dashboard.packet_sniffer') }}" class="btn btn-primary">Packet Sniffer</a>
+    <a href="{{ url_for('dashboard.port_scanner') }}" class="btn btn-secondary">Port Scanner</a>
+    <a href="{{ url_for('dashboard.results') }}" class="btn btn-info">Results</a>
+    <a href="{{ url_for('dashboard.admin') }}" class="btn btn-danger">Admin</a>
 
-    {% if role == 'Admin' %}
-        <div class="mt-4">
-            <h4>Networking Tools</h4>
-            <form action="{{ url_for('dashboard.sniff_packets') }}" method="post">
-                <div class="form-group">
-                    <label for="interface">Interface:</label>
-                    <input type="text" id="interface" name="interface" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-secondary mb-3">Run Packet Sniffer</button>
-            </form>
-            <form action="{{ url_for('dashboard.scan_ports') }}" method="post">
-                <div class="form-group">
-                    <label for="host">Host:</label>
-                    <input type="text" id="host" name="host" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="start_port">Start Port:</label>
-                    <input type="number" id="start_port" name="start_port" class="form-control" min="1" max="65535" required>
-                </div>
-                <div class="form-group">
-                    <label for="end_port">End Port:</label>
-                    <input type="number" id="end_port" name="end_port" class="form-control" min="1" max="65535" required>
-                </div>
-                <button type="submit" class="btn btn-primary mb-3">Run Port Scanner</button>
-            </form>
-        </div>
-    {% endif %}
-
-    <div class="mt-4">
-        <h4>Scan Results</h4>
-        {% if scan_results %}
-            <ul>
-                {% for result in scan_results %}
-                    <li>
-                        <strong>Timestamp:</strong> {{ result.timestamp }}<br>
-                        <strong>Target IP:</strong> {{ result.target_ip }}<br>
-                        <strong>Open Ports:</strong> {{ result.open_ports }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No scan results available.</p>
-        {% endif %}
-        <button onclick="toggleScanResults()" class="btn btn-warning">Hide/Show Scan Results</button>
-        {% if role == 'Admin' %}
-            <form action="{{ url_for('dashboard.remove_scan_results') }}" method="post">
-                <button type="submit" class="btn btn-danger">Remove Scan Results</button>
-            </form>
-        {% endif %}
-    </div>
-
-    <div class="mt-4">
-        <h4>Packet Sniffing Results</h4>
-        {% if packet_sniffer_results %}
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Timestamp</th>
-                        <th>Source IP</th>
-                        <th>Destination IP</th>
-                        <th>Protocol</th>
-                        <th>Payload</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for packet in packet_sniffer_results %}
-                        <tr>
-                            <td>{{ packet.timestamp }}</td>
-                            <td>{{ packet.source_ip }}</td>
-                            <td>{{ packet.destination_ip }}</td>
-                            <td>{{ packet.protocol }}</td>
-                            <td>{{ packet.payload }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No packet sniffing results available.</p>
-        {% endif %}
-    </div>
-
-    <script>
-    function toggleScanResults() {
-        var scanResults = document.getElementById('scan-results');
-        if (scanResults.style.display === 'none') {
-            scanResults.style.display = 'block';
-        } else {
-            scanResults.style.display = 'none';
-        }
-    }
-    </script>
 {% endblock %}
+
+<!-- Not sure if this file is needed. -->

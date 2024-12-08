@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
+    <h2>Scan Results</h2>
+    <div x-data="{ messages: {{ get_flashed_messages(with_categories=true) | tojson }} }">
+        <template x-for="[category, message] in messages">
+            <div :class="'alert alert-' + category" role="alert" x-text="message"></div>
+        </template>
+    </div>
+
+    {% if scan_results %}
+        <form method="POST" action="{{ url_for('dashboard.clear_scan_results') }}">
+            <button type="submit" class="btn btn-danger mb-3">Clear All Scanner Results</button>
+        </form>
+        <div class="row">
+            {% for result in scan_results %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Timestamp:</strong> {{ result.timestamp }}<br>
+                                <strong>Target IP:</strong> {{ result.target_ip }}<br>
+                                <strong>Open Ports:</strong> {{ result.open_ports }}
+                            </p>
+                            <form method="POST" action="{{ url_for('dashboard.remove_scan_result', result_id=result.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No scan results available.</p>
+    {% endif %}
+
+    <h2>Packet Sniffing Results</h2>
+    {% if packet_sniffer_results %}
+        <form method="POST" action="{{ url_for('dashboard.clear_packet_results') }}">
+            <button type="submit" class="btn btn-danger mb-3">Clear All Sniffer Results</button>
+        </form>
+        <div class="row">
+            {% for packet in packet_sniffer_results %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Timestamp:</strong> {{ packet.timestamp }}<br>
+                                <strong>Source IP:</strong> {{ packet.source_ip }}<br>
+                                <strong>Destination IP:</strong> {{ packet.destination_ip }}<br>
+                                <strong>Protocol:</strong> {{ packet.protocol }}<br>
+                                <strong>Payload:</strong>
+                                <div style="max-height: 100px; overflow-y: auto;">
+                                    <pre>{{ packet.payload }}</pre>
+                                </div>
+                            <form method="POST" action="{{ url_for('dashboard.remove_packet_result', result_id=packet.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No packet sniffing results available.</p>
+    {% endif %}
+{% endblock %}

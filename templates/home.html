@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h2>Networking & Cybersecurity Tools</h2>
+    <h6>Welcome, {{ current_user.username }}!</h6>
+    <p>Use the tools below to analyze network traffic and scan for open ports, then view the results.</p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Packet Sniffer</h5>
+                    <p class="card-text">Analyze local network traffic.</p>
+                    <a href="{{ url_for('dashboard.packet_sniffer') }}" class="btn btn-primary">Go to Packet Sniffer</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Port Scanner</h5>
+                    <p class="card-text">Scan for open ports on a target system.</p>
+                    <a href="{{ url_for('dashboard.port_scanner') }}" class="btn btn-primary">Go to Port Scanner</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Results</h5>
+                    <p class="card-text">View the results of these tools.</p>
+                    <a href="{{ url_for('dashboard.results') }}" class="btn btn-primary">Go to Results</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

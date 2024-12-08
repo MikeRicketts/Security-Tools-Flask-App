@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Port Scanner{% endblock %}
+
+{% block content %}
+    <h2>Port Scanner</h2>
+    <div x-data="{ messages: {{ get_flashed_messages(with_categories=true) | tojson }} }">
+        <template x-for="[category, message] in messages">
+            <div :class="'alert alert-' + category" role="alert" x-text="message"></div>
+        </template>
+    </div>
+    <form action="{{ url_for('dashboard.port_scanner') }}" method="post" class="mt-3" x-data="{ scanning: false, progress: 0 }" @submit="scanning = true">
+        <div class="form-group">
+            <label for="host">Host:</label>
+            <input type="text" id="host" name="host" class="form-control" placeholder="e.g. 192.168.1.1" required>
+        </div>
+        <div class="form-group">
+            <label for="start_port">Start Port:</label>
+            <input type="number" id="start_port" name="start_port" class="form-control" min="1" max="65535" placeholder="e.g. 1" required>
+        </div>
+        <div class="form-group">
+            <label for="end_port">End Port:</label>
+            <input type="number" id="end_port" name="end_port" class="form-control" min="1" max="65535" placeholder="e.g. 443" required>
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Run Port Scanner</button>
+        <div x-show="scanning" class="mt-3">
+            <p>Scanning in progress... <span x-text="progress"></span>%</p>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" :style="{ width: progress + '%' }" aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </form>
+
+    {% if current_scan_result %}
+        <h3>Current Result</h3>
+        <ul>
+            <li>
+                <strong>Timestamp:</strong> {{ current_scan_result.timestamp }}<br>
+                <strong>Target IP:</strong> {{ current_scan_result.target_ip }}<br>
+                <strong>Open Ports:</strong> {{ current_scan_result.open_ports }}
+            </li>
+        </ul>
+    {% else %}
+        <p>No result available.</p>
+    {% endif %}
+{% endblock %}
