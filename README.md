@@ -1,102 +1,41 @@
-# Networking & Cybersecurity Tools Dashboard
+# Network Security Tools Dashboard
 
-A Flask-based web dashboard that integrates a Go TCP port scanner and a Python-based packet sniffer using Scapy. Includes user authentication with role-based access and persistent storage of results in SQLite.
+**Flask** web dashboard with integrated **Go TCP port scanner** and **Python Scapy packet sniffer**. Includes user authentication with Admin/User roles and stores results in SQLite.
 
-## Overview
+## ✅ Features
 
-This project includes:
+- User registration, login, logout  
+- Role-based access control (Admin/User)  
+- Execute Go-based TCP port scans from the dashboard  
+- Execute Scapy-based packet sniffing from the dashboard  
+- View and manage scan/sniff results  
+- Admin controls: promote users, delete users, clear or delete results  
 
-- `main.go` – CLI-based TCP port scanner written in Go
-- `packet-sniffer.py` – Packet capture utility using Scapy
-- Flask web interface for:
-  - Running and viewing port scan results
-  - Running and viewing packet sniffer results
-  - User management and admin functionality
+## 🛠 Tech Stack
 
-## Usage
+- Python – Flask, Flask-Login, Flask-Bcrypt, Flask-SQLAlchemy  
+- Go – standard library for concurrent TCP scanning  
+- Scapy – packet capture and parsing  
+- SQLite – via SQLAlchemy ORM  
+- Bootstrap – UI templates (Jinja2)
 
-### Run Flask App
+## 🚀 Setup & Running
 
-```bash
-python app.py
-Registers blueprints from routes.auth and routes.dashboard
+1. Clone the repository  
+2. Install Python dependencies:  
+   pip install flask flask-login flask-bcrypt flask-sqlalchemy scapy  
+3. Install Go (v1.x)  
+4. Run the app:  
+   python app.py  
+5. Log in using credentials:  
+   **admin / admin** (created on first run)
 
-Auto-creates admin user (admin:admin) if it doesn’t exist
+## ⚠️ Notes
 
-Re-hashes any plaintext-stored passwords using bcrypt
+- Port scanner and sniffer run via subprocess; make sure Go and Scapy are installed and available in your shell.  
+- Packet sniffer may require root/sudo to capture traffic.  
+- Results are stored in `network_security_tools.db` and displayed in the dashboard.  
 
-Go Port Scanner
-Used via subprocess in the dashboard:
+## 📝 License
 
-bash
-Copy
-Edit
-go run main.go <host> <start_port> <end_port>
-Validates input IP or hostname
-
-Scans range using concurrent goroutines
-
-Outputs a JSON object with open ports, closed ports, and timestamp
-
-Python Packet Sniffer
-Executed via subprocess in the dashboard:
-
-bash
-Copy
-Edit
-sudo python packet-sniffer.py
-Captures TCP/UDP traffic using Scapy
-
-Detects basic application-layer protocols
-
-Stores captured data in captured_packets.json
-
-Web Dashboard
-/ – Home page with links to tools
-
-/auth/login – Login + registration
-
-/port_scanner – Submit host/port range, view result
-
-/packet_sniffer – Start sniffer, view captured packet summary
-
-/results – View past scan/sniff data
-
-Admin-only:
-
-Promote users
-
-Remove scan/sniff results
-
-Clear all data
-
-Delete non-admin users
-
-Dependencies
-Python:
-
-flask
-
-flask-login
-
-flask-bcrypt
-
-flask-sqlalchemy
-
-scapy
-
-Go:
-
-Standard library only (net, os, encoding/json, etc.)
-
-Notes
-Results stored in network_security_tools.db (SQLite)
-
-Captured packets saved to captured_packets.json
-
-Templates use Bootstrap 5 and some Alpine.js for interactivity
-
-Admin UI available once logged in with Admin role
-
-Disclaimer
-This tool is for educational and internal testing purposes only. Do not deploy or run in unauthorized environments.
+This project is provided for educational and authorized testing purposes only.
