@@ -17,7 +17,7 @@
 - Go – standard library for concurrent TCP scanning  
 - Scapy – packet capture and parsing  
 - SQLite – via SQLAlchemy ORM  
-- Bootstrap – UI templates (Jinja2)
+- Bootstrap – UI templates (Jinja2) & Alpine.js
 
 ## Setup & Running
 
