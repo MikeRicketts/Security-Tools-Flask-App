@@ -2,7 +2,7 @@
 
 **Flask** web dashboard with integrated **Go TCP port scanner** and **Python Scapy packet sniffer**. Includes user authentication with Admin/User roles and stores results in SQLite.
 
-## ✅ Features
+## Features
 
 - User registration, login, logout  
 - Role-based access control (Admin/User)  
@@ -11,7 +11,7 @@
 - View and manage scan/sniff results  
 - Admin controls: promote users, delete users, clear or delete results  
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - Python – Flask, Flask-Login, Flask-Bcrypt, Flask-SQLAlchemy  
 - Go – standard library for concurrent TCP scanning  
@@ -19,7 +19,7 @@
 - SQLite – via SQLAlchemy ORM  
 - Bootstrap – UI templates (Jinja2)
 
-## 🚀 Setup & Running
+## Setup & Running
 
 1. Clone the repository  
 2. Install Python dependencies:  
@@ -30,12 +30,12 @@
 5. Log in using credentials:  
    **admin / admin** (created on first run)
 
-## ⚠️ Notes
+##  Notes
 
 - Port scanner and sniffer run via subprocess; make sure Go and Scapy are installed and available in your shell.  
 - Packet sniffer may require root/sudo to capture traffic.  
 - Results are stored in `network_security_tools.db` and displayed in the dashboard.  
 
-## 📝 License
+## License
 
 This project is provided for educational and authorized testing purposes only.
