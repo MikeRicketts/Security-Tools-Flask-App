@@ -1,0 +1,12 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+*.db
+instance
+.env
+tools/scanner/scanner
+tools/scanner/scanner.exe
+docs
+tests

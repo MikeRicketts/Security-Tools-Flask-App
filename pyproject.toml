@@ -1,0 +1,33 @@
+[project]
+name = "network-security-tools"
+version = "1.0.0"
+description = "Flask dashboard wrapping a Go TCP port scanner and a Scapy packet sniffer, with role-based auth."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "flask>=3.0",
+    "flask-login>=0.6",
+    "flask-bcrypt>=1.0",
+    "flask-sqlalchemy>=3.1",
+    "flask-wtf>=1.2",
+    "scapy>=2.5",
+    "gunicorn>=22.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["app", "config", "extensions", "models"]
+packages = ["routes"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

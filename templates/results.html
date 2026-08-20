@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Scan Results</h2>
+        {% if scan_results and current_user.is_admin %}
+        <form method="POST" action="{{ url_for('dashboard.clear_scan_results') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-danger btn-sm">Clear All</button>
+        </form>
+        {% endif %}
+    </div>
+    {% if scan_results %}
+        <div class="row g-3 mt-1">
+            {% for r in scan_results %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <p class="card-text mb-2">
+                            <strong>Timestamp:</strong> {{ r.timestamp }}<br>
+                            <strong>Target:</strong> {{ r.target_ip }}<br>
+                            <strong>Open Ports:</strong> {{ r.open_ports }}
+                        </p>
+                        {% if current_user.is_admin %}
+                        <form method="POST" action="{{ url_for('dashboard.remove_scan_result', result_id=r.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No scan results yet.</p>
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h2>Packet Capture Results</h2>
+        {% if packet_sniffer_results and current_user.is_admin %}
+        <form method="POST" action="{{ url_for('dashboard.clear_packet_results') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-danger btn-sm">Clear All</button>
+        </form>
+        {% endif %}
+    </div>
+    {% if packet_sniffer_results %}
+        <div class="row g-3 mt-1">
+            {% for p in packet_sniffer_results %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <p class="card-text mb-2">
+                            <strong>Timestamp:</strong> {{ p.timestamp }}<br>
+                            <strong>Source:</strong> {{ p.source_ip }}<br>
+                            <strong>Destination:</strong> {{ p.destination_ip }}<br>
+                            <strong>Protocol:</strong> {{ p.protocol }}<br>
+                            <strong>Payload:</strong>
+                        </p>
+                        <div style="max-height: 100px; overflow-y: auto;" class="mb-2"><pre>{{ p.payload }}</pre></div>
+                        {% if current_user.is_admin %}
+                        <form method="POST" action="{{ url_for('dashboard.remove_packet_result', result_id=p.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No packet results yet.</p>
+    {% endif %}
+{% endblock %}

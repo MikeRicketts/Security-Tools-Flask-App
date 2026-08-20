@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# Environment / secrets
+.env
+
+# Databases & runtime artifacts
+*.db
+instance/
+captured_packets.json
+
+# Go build output
+tools/scanner/scanner
+tools/scanner/scanner.exe
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

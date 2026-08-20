@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    <h2>Network Security Tools</h2>
+    <p class="text-muted">Run a TCP port scan or capture live traffic, then review saved results.</p>
+
+    <div class="row g-3">
+        {% if current_user.is_admin %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Packet Sniffer</h5>
+                    <p class="card-text">Capture and inspect local network traffic with Scapy.</p>
+                    <a href="{{ url_for('dashboard.packet_sniffer') }}" class="btn btn-primary">Open</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Port Scanner</h5>
+                    <p class="card-text">Concurrent Go-based TCP scan across a port range.</p>
+                    <a href="{{ url_for('dashboard.port_scanner') }}" class="btn btn-primary">Open</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Results</h5>
+                    <p class="card-text">Browse saved scan and capture results.</p>
+                    <a href="{{ url_for('dashboard.results') }}" class="btn btn-primary">Open</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not current_user.is_admin %}
+        <p class="text-muted mt-4"><em>Running the tools requires an Admin account.</em></p>
+    {% endif %}
+{% endblock %}

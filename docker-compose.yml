@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Generate real values in a .env file; see .env.example.
+      SECRET_KEY: ${SECRET_KEY:-dev-only-change-me}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      FLASK_DEBUG: "0"
+    volumes:
+      - app-data:/app/instance
+    # Packet capture needs raw-socket access. To sniff the host's traffic
+    # rather than the container's isolated network, also add (Linux only):
+    #   network_mode: host
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+
+volumes:
+  app-data:
