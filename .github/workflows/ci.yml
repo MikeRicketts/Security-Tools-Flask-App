@@ -12,9 +12,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - name: Install dependencies
-        run: uv pip install --system ".[dev]"
+        run: uv sync --extra dev
       - name: Run tests
-        run: pytest -q
+        run: uv run pytest -q
 
   go:
     runs-on: ubuntu-latest
